@@ -1,0 +1,259 @@
+{
+  "seasons": [
+    {
+      "year": 2022,
+      "races": [
+        {
+          "race": "Bahrain Grand Prix",
+          "date": "2022-03-20",
+          "winner": "Charles Leclerc",
+          "team": "Ferrari",
+          "laps": 57,
+          "time": "1:37:33.584",
+          "fastest_lap": "1:34.570",
+          "average_speed_kph": 206.4,
+          "temperature_celsius": 32,
+          "pit_stops": 2,
+          "race_time_min": 97.5
+        },
+        {
+          "race": "Saudi Arabian Grand Prix",
+          "date": "2022-03-27",
+          "winner": "Max Verstappen",
+          "team": "Red Bull Racing",
+          "laps": 50,
+          "time": "1:24:19.293",
+          "fastest_lap": "1:31.634",
+          "average_speed_kph": 215.2,
+          "temperature_celsius": 30,
+          "pit_stops": 3,
+          "race_time_min": 84.3
+        },
+        {
+          "race": "Australian Grand Prix",
+          "date": "2022-04-10",
+          "winner": "George Russell",
+          "team": "Mercedes",
+          "laps": 58,
+          "time": "1:32:11.678",
+          "fastest_lap": "1:20.512",
+          "average_speed_kph": 200.5,
+          "temperature_celsius": 28,
+          "pit_stops": 2,
+          "race_time_min": 101.0
+        }
+      ],
+      "team_points": [
+        { "team": "Red Bull Racing", "points": 655 },
+        { "team": "Ferrari", "points": 524 },
+        { "team": "Mercedes", "points": 620 },
+        { "team": "McLaren", "points": 318 },
+        { "team": "Alpine", "points": 220 }
+      ],
+      "driver_points": [
+        { "driver": "Max Verstappen", "points": 454 },
+        { "driver": "Charles Leclerc", "points": 308 },
+        { "driver": "Lewis Hamilton", "points": 332 },
+        { "driver": "George Russell", "points": 275 },
+        { "driver": "Lando Norris", "points": 180 }
+      ],
+      "driver_performance": [
+        {
+          "name": "Max Verstappen",
+          "points": 454,
+          "podiums": 15,
+          "fastest_laps": 8,
+          "average_speed_kph": 210,
+          "pit_stops": 12
+        },
+        {
+          "name": "Charles Leclerc",
+          "points": 308,
+          "podiums": 10,
+          "fastest_laps": 5,
+          "average_speed_kph": 205,
+          "pit_stops": 11
+        },
+        {
+          "name": "Lewis Hamilton",
+          "points": 332,
+          "podiums": 12,
+          "fastest_laps": 6,
+
+          "average_speed_kph": 202,
+          "pit_stops": 10
+        }
+      ]
+    },
+    {
+      "year": 2023,
+      "races": [
+        {
+          "race": "Bahrain Grand Prix",
+          "date": "2023-03-05",
+          "winner": "Max Verstappen",
+          "team": "Red Bull Racing",
+          "laps": 57,
+          "time": "1:33:43.456",
+          "fastest_lap": "1:30.912",
+          "average_speed_kph": 210.7,
+          "temperature_celsius": 34,
+          "pit_stops": 2,
+          "race_time_min": 93.7
+        },
+        {
+          "race": "Saudi Arabian Grand Prix",
+          "date": "2023-03-19",
+          "winner": "Sergio Perez",
+          "team": "Red Bull Racing",
+          "laps": 50,
+          "time": "1:24:18.837",
+          "fastest_lap": "1:29.284",
+          "average_speed_kph": 218.3,
+          "temperature_celsius": 31,
+          "pit_stops": 3,
+          "race_time_min": 84.3
+        },
+        {
+          "race": "Australian Grand Prix",
+          "date": "2023-04-02",
+
+          "winner": "Lewis Hamilton",
+          "team": "Mercedes",
+          "laps": 58,
+          "time": "1:35:10.569",
+          "fastest_lap": "1:21.645",
+          "average_speed_kph": 202.9,
+          "temperature_celsius": 29,
+          "pit_stops": 2,
+          "race_time_min": 95.2
+        }
+      ],
+      "team_points": [
+        { "team": "Red Bull Racing", "points": 780 },
+        { "team": "Ferrari", "points": 620 },
+        { "team": "Mercedes", "points": 695 },
+        { "team": "McLaren", "points": 355 },
+        { "team": "Aston Martin", "points": 300 }
+      ],
+      "driver_points": [
+        { "driver": "Max Verstappen", "points": 575 },
+        { "driver": "Sergio Perez", "points": 450 },
+        { "driver": "Lewis Hamilton", "points": 410 },
+        { "driver": "George Russell", "points": 350 },
+        { "driver": "Lando Norris", "points": 280 }
+      ],
+      "driver_performance": [
+        {
+          "name": "Max Verstappen",
+          "points": 575,
+          "podiums": 16,
+          "fastest_laps": 9,
+          "average_speed_kph": 215,
+          "pit_stops": 11
+        },
+        {
+          "name": "Sergio Perez",
+          "points": 450,
+          "podiums": 11,
+          "fastest_laps": 7,
+          "average_speed_kph": 212,
+          "pit_stops": 10
+        },
+        {
+          "name": "Lewis Hamilton",
+          "points": 410,
+          "podiums": 13,
+          "fastest_laps": 6,
+          "average_speed_kph": 208,
+          "pit_stops": 12
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "races": [
+        {
+          "race": "Bahrain Grand Prix",
+          "date": "2024-03-02",
+          "winner": "Max Verstappen",
+          "team": "Red Bull Racing",
+          "laps": 57,
+          "time": "1:33:46.736",
+          "fastest_lap": "1:31.906",
+          "average_speed_kph": 210.5,
+          "temperature_celsius": 33,
+          "pit_stops": 2,
+          "race_time_min": 93.7
+        },
+        {
+          "race": "Saudi Arabian Grand Prix",
+          "date": "2024-03-09",
+          "winner": "Charles Leclerc",
+          "team": "Ferrari",
+          "laps": 50,
+          "time": "1:25:20.123",
+          "fastest_lap": "1:30.412",
+          "average_speed_kph": 217.1,
+          "temperature_celsius": 32,
+          "pit_stops": 3,
+          "race_time_min": 85.3
+        },
+        {
+          "race": "Australian Grand Prix",
+          "date": "2024-03-24",
+          "winner": "Lewis Hamilton",
+          "team": "Mercedes",
+          "laps": 58,
+          "time": "1:34:55.789",
+          "fastest_lap": "1:21.123",
+          "average_speed_kph": 204.3,
+          "temperature_celsius": 29,
+          "pit_stops": 2,
+          "race_time_min": 94.9
+        }
+      ],
+      "team_points": [
+        { "team": "Red Bull Racing", "points": 820 },
+        { "team": "Ferrari", "points": 670 },
+        { "team": "Mercedes", "points": 720 },
+        { "team": "McLaren", "points": 410 },
+        { "team": "Aston Martin", "points": 350 }
+      ],
+      "driver_points": [
+        { "driver": "Max Verstappen", "points": 620 },
+        { "driver": "Charles Leclerc", "points": 540 },
+        { "driver": "Lewis Hamilton", "points": 500 },
+        { "driver": "George Russell", "points": 410 },
+        { "driver": "Lando Norris", "points": 370 }
+      ],
+      "driver_performance": [
+        {
+          "name": "Max Verstappen",
+          "points": 620,
+          "podiums": 18,
+          "fastest_laps": 10,
+          "average_speed_kph": 220,
+          "pit_stops": 9
+        },
+        {
+          "name": "Charles Leclerc",
+          "points": 540,
+          "podiums": 14,
+          "fastest_laps": 8,
+          "average_speed_kph": 215,
+          "pit_stops": 10
+        },
+
+        {
+          "name": "Lewis Hamilton",
+          "points": 500,
+          "podiums": 12,
+          "fastest_laps": 6,
+          "average_speed_kph": 212,
+          "pit_stops": 11
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Radial Bar Chart - Podiums 2024</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+
+  <body>
+    <h1 style="text-align: center">Formula 1 - Podium Finishes (2024)</h1>
+    <div class="chart-container">
+      <svg id="radialBarChart" width="500" height="500"></svg>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div id="driver-info" style="text-align: center; margin-top: 20px"></div>
+
+    <script>
+      const data = {
+        seasons: [
+          {
+            year: 2024,
+            driver_performance: [
+              {
+                name: "Max Verstappen",
+                points: 620,
+                podiums: 18,
+                fastest_laps: 10,
+                average_speed_kph: 220,
+                pit_stops: 9,
+              },
+              {
+                name: "Charles Leclerc",
+                points: 540,
+                podiums: 14,
+                fastest_laps: 8,
+                average_speed_kph: 215,
+                pit_stops: 10,
+              },
+              {
+                name: "Lewis Hamilton",
+                points: 500,
+                podiums: 12,
+                fastest_laps: 6,
+                average_speed_kph: 212,
+                pit_stops: 11,
+              },
+            ],
+          },
+        ],
+      };
+
+      const performance2024 = data.seasons[0].driver_performance;
+
+      const radialSvg = d3.select("#radialBarChart");
+      const radius = 150;
+      const radiusScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(performance2024, (d) => d.podiums)])
+        .range([0, radius]);
+
+      const angle = d3
+        .scaleBand()
+        .domain(performance2024.map((d) => d.name))
+        .range([0, 2 * Math.PI])
+        .align(0);
+
+      // Create chart group
+      const radialG = radialSvg
+        .append("g")
+        .attr("transform", `translate(${250}, ${250})`);
+
+      // Color scale
+      const colorScale = d3
+        .scaleOrdinal()
+        .domain(performance2024.map((d) => d.name))
+        .range(["#ff6347", "#4682b4", "#32cd32"]);
+
+      // Draw the radial bars (drivers' podium finishes)
+      radialG
+        .selectAll("path")
+        .data(performance2024)
+        .enter()
+        .append("path")
+        .attr("fill", (d) => colorScale(d.name))
+        .attr(
+          "d",
+          d3
+            .arc()
+            .innerRadius(0)
+            .outerRadius((d) => radiusScale(d.podiums))
+            .startAngle((d) => angle(d.name))
+            .endAngle((d) => angle(d.name) + angle.bandwidth())
+            .padAngle(0.01)
+            .padRadius(10)
+        )
+        .on("click", function (event, d) {
+          displayDriverInfo(d);
+        });
+
+      // Draw legend
+      const legend = d3.select("#legend");
+      const legendItems = legend
+        .selectAll(".legend-item")
+        .data(performance2024)
+        .enter()
+        .append("div")
+        .attr("class", "legend-item")
+        .style("display", "flex")
+        .style("align-items", "center");
+
+      legendItems
+        .append("div")
+        .style("width", "20px")
+        .style("height", "20px")
+        .style("background-color", (d) => colorScale(d.name));
+
+      legendItems.append("span").text((d) => d.name);
+
+      // Tooltip setup
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+      radialG
+        .selectAll("path")
+        .on("mouseover", function (event, d) {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html(`<strong>${d.name}</strong><br>Podiums: ${d.podiums}`)
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 30 + "px");
+        })
+        .on("mouseout", () =>
+          tooltip.transition().duration(500).style("opacity", 0)
+        );
+
+      // Display driver info when clicked
+      function displayDriverInfo(driver) {
+        const infoDiv = d3.select("#driver-info");
+        infoDiv.html(`
+        <h3>${driver.name}</h3>
+        <p>Points: ${driver.points}</p>
+        <p>Podiums: ${driver.podiums}</p>
+        <p>Fastest Laps: ${driver.fastest_laps}</p>
+        <p>Average Speed: ${driver.average_speed_kph} km/h</p>
+        <p>Pit Stops: ${driver.pit_stops}</p>
+      `);
+      }
+    </script>
+  </body>
+</html>
