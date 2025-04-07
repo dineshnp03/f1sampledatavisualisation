@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 Bar Chart - Team Points</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+<h1 style="text-align: center">F1 Team Points Comparison (2022-2024)</h1>
+<div class="chart-container">
+    <svg id="barChart" width="700" height="400"></svg>
+</div>
+<div id="legend" class="legend"></div>
+
+
+<script>
+d3.json('assets/f1data.json').then(function(data) {
+    const seasons = data.seasons;
+
+    // Prepare bar data: team points per year
+    const teamPoints = [];
+    seasons.forEach(season => {
+        season.team_points.forEach(teamData => {
+            teamPoints.push({
+                team: teamData.team,
+                year: season.year,
+                points: teamData.points
+            });
+        });
+    });
+
+    const teams = Array.from(new Set(teamPoints.map(d => d.team)));
+    const years = Array.from(new Set(teamPoints.map(d => d.year)));
+
+    const svg = d3.select("#barChart"),
+          margin = {top: 30, right: 60, bottom: 50, left: 60},
+          width = +svg.attr("width") - margin.left - margin.right,
+          height = +svg.attr("height") - margin.top - margin.bottom,
+          chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x0 = d3.scaleBand()
+        .domain(teams)
+        .range([0, width])
+        .padding(0.2);
+
+    const x1 = d3.scaleBand()
+        .domain(years)
+        .range([0, x0.bandwidth()])
+        .padding(0.05);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(teamPoints, d => d.points) + 50])
+        .nice()
+        .range([height, 0]);
+
+    const color = d3.scaleOrdinal()
+        .domain(years)
+        .range(["#ff7f0e", "#1f77b4", "#2ca02c"]);
+
+    // Axes
+    chart.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x0))
+        .selectAll("text")
+            .attr("transform", "rotate(-30)")
+            .style("text-anchor", "end");
+
+    chart.append("g")
+        .call(d3.axisLeft(y));
+
+    // Axis Labels
+    svg.append("text")
+        .attr("transform", `translate(${margin.left + width/2},${height + margin.top + 40})`)
+        .style("text-anchor", "middle")
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", margin.left - 50)
+        .attr("x", 0 - (margin.top + height/2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+
+    // Bars
+    chart.selectAll("g.team")
+        .data(teams)
+        .enter()
+        .append("g")
+            .attr("class", "team")
+            .attr("transform", d => `translate(${x0(d)},0)`)
+        .selectAll("rect")
+        .data(d => years.map(year => {
+            const teamYear = teamPoints.find(tp => tp.team === d && tp.year === year);
+            return {year: year, points: teamYear ? teamYear.points : 0};
+        }))
+        .enter()
+        .append("rect")
+            .attr("x", d => x1(d.year))
+            .attr("y", d => y(d.points))
+            .attr("width", x1.bandwidth())
+            .attr("height", d => height - y(d.points))
+            .attr("fill", d => color(d.year))
+            .on("mouseover", function(event, d) {
+                d3.select(this)
+                  .style("opacity", 0.7);
+
+                tooltip.style("opacity", 1)
+                       .html(`Year: ${d.year}<br>Points: ${d.points}`)
+                       .style("left", (event.pageX + 10) + "px")
+                       .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                  .style("opacity", 1);
+                tooltip.style("opacity", 0);
+            });
+  
+            //legend
+     // ----- Draw Legend -----
+  const legend = d3.select("#legend");
+  const legendItems = legend.selectAll(".legend-item")
+    .data(years)
+    .enter()
+    .append("div")
+    .attr("class", "legend-item");
+
+  legendItems.append("div")
+    .attr("class", "legend-color")
+    .style("background-color", d => color(d));
+
+  legendItems.append("span")
+    .text(d => d);
+
+
+
+    // Tooltip
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+});
+</script>
+
+</body>
+</html>
