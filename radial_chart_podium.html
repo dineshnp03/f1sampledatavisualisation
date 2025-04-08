@@ -5,75 +5,92 @@
     <title>Radial Bar Chart - Podiums Finishes</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="assets/styles.css" />
-    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
+    <link
+      rel="formula1 car icon"
+      href="assets/favicon.ico"
+      type="image/x-icon"
+    />
   </head>
 
   <body>
     <a href="index.html">
       <button class="homeBtn">Go Back to Home</button>
     </a>
-    <h1 style="text-align: center">Formula 1 - Podium Finishes <span id="yearData"></span></h1>
+    <h1 style="text-align: center">
+      Formula 1 - Podium Finishes <span id="yearData"></span>
+    </h1>
 
     <div class="dropdown-container">
-      <label for="yearSelect"><strong>Select Year to get the respective podium finishes of that season:</strong></label>
+      <label for="yearSelect"
+        ><strong
+          >Select Year to get the respective podium finishes of that
+          season:</strong
+        ></label
+      >
       <select id="yearSelect">
         <option value="2022">2022</option>
         <option value="2023">2023</option>
         <option value="2024" selected>2024</option>
       </select>
     </div>
-  
+
     <div class="chart-container">
       <svg id="radialBarChart" width="500" height="500"></svg>
     </div>
     <div class="legend" id="legend"></div>
-    <p class="text-center"><strong>Note:</strong> Click the chart to get the Driver details below.</p>
+    <p class="text-center">
+      <strong>Note:</strong> Click the chart to get the Driver details below.
+    </p>
     <div id="driver-info"></div>
     <script>
       const svg = d3.select("#radialBarChart");
       const width = +svg.attr("width");
       const height = +svg.attr("height");
       const radius = 150;
-      const g = svg.append("g").attr("transform", `translate(${width / 2}, ${height / 2})`);
-  
+      const g = svg
+        .append("g")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
       const tooltip = d3.select("body").append("div").attr("class", "tooltip");
-  
+
       let allData;
-  
+
       // Loading the data from the json file
-      d3.json("assets/f1data.json").then(data => {
+      d3.json("assets/f1data.json").then((data) => {
         allData = data;
         drawChart(2024);
-  
+
         // Getting the data from the select box
         d3.select("#yearSelect").on("change", function () {
           const selectedYear = +this.value;
           drawChart(selectedYear);
         });
       });
-  
+
       // chart function for Radial
       function drawChart(year) {
-        const season = allData.seasons.find(d => d.year === year);
+        const season = allData.seasons.find((d) => d.year === year);
         const drivers = season.driver_performance;
-        d3.select('#yearData').html(year);
+        d3.select("#yearData").html(year);
         g.selectAll("*").remove();
-        d3.select("#legend").html(""); 
-        d3.select("#driver-info").html(""); 
-  
-        const radiusScale = d3.scaleLinear()
-          .domain([0, d3.max(drivers, d => d.podiums)])
+        d3.select("#legend").html("");
+        d3.select("#driver-info").html("");
+
+        const radiusScale = d3
+          .scaleLinear()
+          .domain([0, d3.max(drivers, (d) => d.podiums)])
           .range([0, radius]);
-  
-        const angle = d3.scaleBand()
-          .domain(drivers.map(d => d.name))
+
+        const angle = d3
+          .scaleBand()
+          .domain(drivers.map((d) => d.name))
           .range([0, 2 * Math.PI])
           .align(0);
-  
-        const color = d3.scaleOrdinal()
-          .domain(drivers.map(d => d.name))
+
+        const color = d3
+          .scaleOrdinal()
+          .domain(drivers.map((d) => d.name))
           .range(d3.schemeCategory10);
-  
 
         // Creating the radial path for the data based on the user selection and click event to show the driver details
         g.selectAll("path")
@@ -81,17 +98,21 @@
           .enter()
           .append("path")
           .attr("class", "driver-arc")
-          .attr("fill", d => color(d.name))
-          .attr("d", d3.arc()
-            .innerRadius(0)
-            .outerRadius(d => radiusScale(d.podiums))
-            .startAngle(d => angle(d.name))
-            .endAngle(d => angle(d.name) + angle.bandwidth())
-            .padAngle(0.01)
-            .padRadius(10)
+          .attr("fill", (d) => color(d.name))
+          .attr(
+            "d",
+            d3
+              .arc()
+              .innerRadius(0)
+              .outerRadius((d) => radiusScale(d.podiums))
+              .startAngle((d) => angle(d.name))
+              .endAngle((d) => angle(d.name) + angle.bandwidth())
+              .padAngle(0.01)
+              .padRadius(10)
           )
           .on("mouseover", function (event, d) {
-            tooltip.style("opacity", 1)
+            tooltip
+              .style("opacity", 1)
               .html(`<strong>${d.name}</strong><br>Podiums: ${d.podiums}`)
               .style("left", `${event.pageX + 10}px`)
               .style("top", `${event.pageY - 30}px`);
@@ -107,17 +128,18 @@
               <p>Pit Stops: ${d.pit_stops}</p>
             `);
           });
-  
-          // Legend details based on the year
-        const legend = d3.select("#legend")
+
+        // Legend details based on the year
+        const legend = d3
+          .select("#legend")
           .selectAll(".legend-value")
           .data(drivers)
           .enter()
           .append("div")
           .attr("class", "legend-value");
-  
-        legend.append("div").style("background-color", d => color(d.name));
-        legend.append("span").text(d => d.name);
+
+        legend.append("div").style("background-color", (d) => color(d.name));
+        legend.append("span").text((d) => d.name);
       }
     </script>
   </body>

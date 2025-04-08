@@ -1,178 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>F1 - Pie Chart - Team Points 2024</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
-</head>
-<body>
-  <a href="index.html">
-    <button class="homeBtn">Go Back to Home</button>
-  </a>
-  <h1 style="text-align: center">Formula 1 - Team Points in 2024</h1>
-  <div class="chart-container">
-    <svg id="pieChart" width="500" height="500"></svg>
-  </div>
-  <div class="legend" id="legend_pc"></div>
-  <div id="details" class="details"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>F1 - Pie Chart - Team Points 2024</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link
+      rel="formula1 car icon"
+      href="assets/favicon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <a href="index.html">
+      <button class="homeBtn">Go Back to Home</button>
+    </a>
+    <h1 style="text-align: center">Formula 1 - Team Points in 2024</h1>
+    <div class="chart-container">
+      <svg id="pieChart" width="500" height="500"></svg>
+    </div>
+    <div class="legend" id="legend_pc"></div>
 
-  <script>
-    const svg = d3.select("#pieChart");
-    const width = +svg.attr("width");
-    const height = +svg.attr("height");
-    const radius = Math.min(width, height) / 2 - 40;
+    <p class="text-center">
+      <strong>Note:</strong> Click the chart to get the Driver details below.
+    </p>
+    <div id="details" class="details"></div>
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+    <script>
+      const svg = d3.select("#pieChart");
+      const width = +svg.attr("width");
+      const height = +svg.attr("height");
+      const radius = Math.min(width, height) / 2 - 40;
 
-    const pie = d3.pie().value(d => d.points);
-    const arc = d3.arc().innerRadius(0).outerRadius(radius);
-    const arcHover = d3.arc().innerRadius(0).outerRadius(radius + 10);
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    const chartGroup = svg.append("g")
-      .attr("transform", `translate(${width / 2},${height / 2})`);
+      const pie = d3.pie().value((d) => d.points);
+      const arc = d3.arc().innerRadius(0).outerRadius(radius);
+      const arcHover = d3
+        .arc()
+        .innerRadius(0)
+        .outerRadius(radius + 10);
 
-    const tooltip = d3.select("body").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-    let visibility = {};
-
-    function renderChart(data) {
-      const filteredData = data.filter(d => visibility[d.team]);
-      const totalPoints = d3.sum(filteredData, d => d.points);
-
-      const arcs = pie(filteredData);
-
-      // Update paths
-      const paths = chartGroup.selectAll(".arc")
-        .data(arcs, d => d.data.team);
-
-      // Exit
-      paths.exit().remove();
-
-      // Enter
-      const newPaths = paths.enter()
+      const chartGroup = svg
         .append("g")
-        .attr("class", "arc");
+        .attr("transform", `translate(${width / 2},${height / 2})`);
 
-      newPaths.append("path")
-        .attr("fill", d => color(d.data.team))
-        .attr("d", arc)
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1)
-        .each(function(d) { this._current = d; })
-        .on("mouseover", function(event, d) {
-          d3.select(this).select("path")
-            .transition()
-            .duration(200)
-            .attr("d", arcHover)
-            .attr("stroke-width", 2);
-            
-          tooltip.style("opacity", 1)
-            .html(`<strong>${d.data.team}</strong><br>${d.data.points} points`)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
-        })
-        .on("mousemove", (event) => {
-          tooltip.style("left", (event.pageX + 10) + "px")
-                 .style("top", (event.pageY - 28) + "px");
-        })
-        .on("mouseout", function() {
-          d3.select(this).select("path")
-            .transition()
-            .duration(200)
-            .attr("d", arc)
-            .attr("stroke-width", 1);
-          tooltip.style("opacity", 0);
-        })
-        .on("click", function(event, d) {
-          d3.selectAll(".arc path").classed("selected", false);
-          d3.select(this).select("path").classed("selected", true);
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
-          const percentage = Math.round((d.data.points / totalPoints) * 100);
+      let visibility = {};
 
-          d3.select("#details").html(`
+      function renderChart(data) {
+        const filteredData = data.filter((d) => visibility[d.team]);
+        const totalPoints = d3.sum(filteredData, (d) => d.points);
+
+        const arcs = pie(filteredData);
+
+        const paths = chartGroup
+          .selectAll(".arc")
+          .data(arcs, (d) => d.data.team);
+
+        paths.exit().remove();
+
+        const newPaths = paths.enter().append("g").attr("class", "arc");
+
+        newPaths
+          .append("path")
+          .attr("fill", (d) => color(d.data.team))
+          .attr("d", arc)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1)
+          .each(function (d) {
+            this._current = d;
+          })
+          .on("mouseover", function (event, d) {
+            d3.select(this)
+              .select("path")
+              .transition()
+              .duration(200)
+              .attr("d", arcHover)
+              .attr("stroke-width", 2);
+
+            tooltip
+              .style("opacity", 1)
+              .html(
+                `<strong>${d.data.team}</strong><br>${d.data.points} points`
+              )
+              .style("left", event.pageX + 10 + "px")
+              .style("top", event.pageY - 28 + "px");
+          })
+          .on("mousemove", (event) => {
+            tooltip
+              .style("left", event.pageX + 10 + "px")
+              .style("top", event.pageY - 28 + "px");
+          })
+          .on("mouseout", function () {
+            d3.select(this)
+              .select("path")
+              .transition()
+              .duration(200)
+              .attr("d", arc)
+              .attr("stroke-width", 1);
+            tooltip.style("opacity", 0);
+          })
+          .on("click", function (event, d) {
+            d3.selectAll(".arc path").classed("selected", false);
+            d3.select(this).select("path").classed("selected", true);
+
+            const percentage = Math.round((d.data.points / totalPoints) * 100);
+
+            d3.select("#details").html(`
             <h3>${d.data.team}</h3>
             <p><strong>Points:</strong> ${d.data.points}</p>
             <p><strong>Percentage:</strong> ${percentage}%</p>
           `);
-        });
+          });
 
-      // Update existing paths
-      paths.select("path")
-        .transition()
-        .duration(500)
-        .attrTween("d", function(d) {
-          const interpolate = d3.interpolate(this._current, d);
-          this._current = interpolate(0);
-          return t => arc(interpolate(t));
-        });
+        paths
+          .select("path")
+          .transition()
+          .duration(500)
+          .attrTween("d", function (d) {
+            const interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return (t) => arc(interpolate(t));
+          });
 
-      // Update percentage labels
-      const labels = chartGroup.selectAll(".percentage-label")
-        .data(arcs, d => d.data.team);
+        const labels = chartGroup
+          .selectAll(".percentage-label")
+          .data(arcs, (d) => d.data.team);
 
-      labels.enter()
-        .append("text")
-        .attr("class", "percentage-label")
-        .attr("transform", d => {
-          const pos = arc.centroid(d);
-          return `translate(${pos[0]}, ${pos[1]})`;
-        })
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .style("font-size", "12px")
-        .style("font-weight", "bold")
-        .style("fill", "white")
-        .text(d => {
-          const percentage = Math.round((d.data.points / totalPoints) * 100);
-          return percentage > 5 ? `${percentage}%` : "";
-        });
+        labels
+          .enter()
+          .append("text")
+          .attr("class", "percentage-label")
+          .attr("transform", (d) => {
+            const pos = arc.centroid(d);
+            return `translate(${pos[0]}, ${pos[1]})`;
+          })
+          .attr("dy", "0.35em")
+          .attr("text-anchor", "middle")
+          .style("font-size", "12px")
+          .style("font-weight", "bold")
+          .style("fill", "white")
+          .text((d) => {
+            const percentage = Math.round((d.data.points / totalPoints) * 100);
+            return percentage > 5 ? `${percentage}%` : "";
+          });
 
-      labels.transition().duration(500)
-        .attr("transform", d => {
-          const pos = arc.centroid(d);
-          return `translate(${pos[0]}, ${pos[1]})`;
-        })
-        .text(d => {
-          const percentage = Math.round((d.data.points / totalPoints) * 100);
-          return percentage > 5 ? `${percentage}%` : "";
-        });
+        labels
+          .transition()
+          .duration(500)
+          .attr("transform", (d) => {
+            const pos = arc.centroid(d);
+            return `translate(${pos[0]}, ${pos[1]})`;
+          })
+          .text((d) => {
+            const percentage = Math.round((d.data.points / totalPoints) * 100);
+            return percentage > 5 ? `${percentage}%` : "";
+          });
 
-      labels.exit().remove();
-    }
+        labels.exit().remove();
+      }
 
-    d3.json("assets/f1data.json").then(data => {
-      const season2024 = data.seasons.find(season => season.year === 2024);
-      const teamData = season2024.team_points;
+      d3.json("assets/f1data.json")
+        .then((data) => {
+          const season2024 = data.seasons.find(
+            (season) => season.year === 2024
+          );
+          const teamData = season2024.team_points;
 
-      visibility = Object.fromEntries(teamData.map(d => [d.team, true]));
+          visibility = Object.fromEntries(teamData.map((d) => [d.team, true]));
 
-      const legend = d3.select("#legend_pc");
-      const legendItems = legend.selectAll(".legend-item")
-        .data(teamData)
-        .enter()
-        .append("div")
-        .attr("class", "legend-item")
-        .on("click", function(event, d) {
-          visibility[d.team] = !visibility[d.team];
-          d3.select(this).classed("inactive", !visibility[d.team]);
+          const legend = d3.select("#legend_pc");
+          const legendItems = legend
+            .selectAll(".legend-item")
+            .data(teamData)
+            .enter()
+            .append("div")
+            .attr("class", "legend-item")
+            .on("click", function (event, d) {
+              visibility[d.team] = !visibility[d.team];
+              d3.select(this).classed("inactive", !visibility[d.team]);
+              renderChart(teamData);
+            });
+
+          legendItems
+            .append("div")
+            .style("background-color", (d) => color(d.team))
+            .style("width", "20px")
+            .style("height", "20px");
+
+          legendItems.append("span").text((d) => d.team);
+
           renderChart(teamData);
+        })
+        .catch((error) => {
+          console.error("Error loading pie chart data:", error);
         });
-
-      legendItems.append("div")
-        .style("background-color", d => color(d.team))
-        .style("width", "20px")
-        .style("height", "20px");
-
-      legendItems.append("span").text(d => d.team);
-
-      renderChart(teamData);
-    }).catch(error => {
-      console.error("Error loading pie chart data:", error);
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

@@ -43,7 +43,7 @@ path.driver-arc:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center
+  align-items: center;
 }
 #yearSelect {
   width: 200px;
@@ -84,14 +84,14 @@ path.driver-arc:hover {
 
 .homeBtn {
   background-color: #000;
-    color: #f9f9f9;
-    padding: 0.75rem 1rem;
-    outline: none;
-    cursor: pointer;
-    font-size: medium;
-    font-weight: 600;
-    border-radius: 5px;
-    border: none;
+  color: #f9f9f9;
+  padding: 0.75rem 1rem;
+  outline: none;
+  cursor: pointer;
+  font-size: medium;
+  font-weight: 600;
+  border-radius: 5px;
+  border: none;
 }
 
 .pie-label {

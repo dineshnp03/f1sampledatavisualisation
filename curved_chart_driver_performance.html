@@ -5,7 +5,11 @@
     <title>F1 - Curved Line Chart - Driver Performance</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="assets/styles.css" />
-    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
+    <link
+      rel="formula1 car icon"
+      href="assets/favicon.ico"
+      type="image/x-icon"
+    />
   </head>
   <body>
     <a href="index.html">
@@ -23,13 +27,11 @@
       // Fetching the data from the json file
       d3.json("assets/f1data.json")
         .then(function (data) {
-          
           const driverData = data.seasons[0].driver_performance.map((d) => ({
             name: d.name,
             performance: [],
           }));
 
-          // Collect data for all the seasons
           data.seasons.forEach((season) => {
             season.driver_performance.forEach((driver, index) => {
               driverData[index].performance.push({
@@ -59,7 +61,6 @@
             ])
             .range([height - 40, 40]);
 
-          // Line generator with curve
           const lineGenerator = d3
             .line()
             .x((d) => xScale(d.year))
@@ -83,7 +84,6 @@
             .domain(driverData.map((d) => d.name))
             .range(["#ff6347", "#4682b4", "#32cd32"]);
 
-         
           driverData.forEach((driver) => {
             svg
               .append("path")

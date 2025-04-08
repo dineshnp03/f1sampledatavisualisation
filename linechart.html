@@ -1,124 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>F1 Line Chart - Speed Trends</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/styles.css" />
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
-</head>
-<body>
+    <link
+      rel="formula1 car icon"
+      href="assets/favicon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
     <a href="index.html">
-        <button class="homeBtn">Go Back to Home</button>
-      </a>
-<h1 style="text-align: center">Formula 1 - Average Speed Trends (2022-2024)</h1>
+      <button class="homeBtn">Go Back to Home</button>
+    </a>
+    <h1 style="text-align: center">
+      Formula 1 - Average Speed Trends (2022-2024)
+    </h1>
 
-<div class="chart-container">
-    <svg id="lineChart" width="800" height="500"></svg>
-</div>
-<div id="legend" class="legend"></div>
+    <div class="chart-container">
+      <svg id="lineChart" width="800" height="500"></svg>
+    </div>
+    <div id="legend" class="legend"></div>
 
-<script>
-d3.json('assets/f1data.json').then(function(data) {
-    const seasons = data.seasons;
+    <script>
+      d3.json("assets/f1data.json").then(function (data) {
+        const seasons = data.seasons;
 
-    const speedData = {};
-    seasons.forEach(season => {
-        speedData[season.year] = season.races.map(race => ({
+        const speedData = {};
+        seasons.forEach((season) => {
+          speedData[season.year] = season.races.map((race) => ({
             race: race.race,
-            average_speed_kph: race.average_speed_kph
-        }));
-    });
+            average_speed_kph: race.average_speed_kph,
+          }));
+        });
 
-    const svg = d3.select("#lineChart"),
-    margin = {top: 50, right:80, bottom: 90, left: 120},
+        const svg = d3.select("#lineChart"),
+          margin = { top: 50, right: 80, bottom: 90, left: 120 },
           width = +svg.attr("width") - margin.left - margin.right,
           height = +svg.attr("height") - margin.top - margin.bottom,
-          chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+          chart = svg
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const allRaces = [...new Set(seasons.flatMap(season => season.races.map(r => r.race)))];
-    const x = d3.scalePoint()
-        .domain(allRaces)
-        .range([0, width])
-        .padding(0.5);
+        const allRaces = [
+          ...new Set(
+            seasons.flatMap((season) => season.races.map((r) => r.race))
+          ),
+        ];
+        const x = d3
+          .scalePoint()
+          .domain(allRaces)
+          .range([0, width])
+          .padding(0.5);
 
-    const y = d3.scaleLinear()
-        .domain([
-            d3.min(seasons, s => d3.min(s.races, r => r.average_speed_kph)) - 10,
-            d3.max(seasons, s => d3.max(s.races, r => r.average_speed_kph)) + 10
-        ])
-        .nice()
-        .range([height, 0]);
+        const y = d3
+          .scaleLinear()
+          .domain([
+            d3.min(seasons, (s) =>
+              d3.min(s.races, (r) => r.average_speed_kph)
+            ) - 10,
+            d3.max(seasons, (s) =>
+              d3.max(s.races, (r) => r.average_speed_kph)
+            ) + 10,
+          ])
+          .nice()
+          .range([height, 0]);
 
-    chart.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "rotate(-40)")
-        .style("text-anchor", "end");
+        chart
+          .append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+          .attr("transform", "rotate(-40)")
+          .style("text-anchor", "end");
 
-    chart.append("g")
-        .call(d3.axisLeft(y));
+        chart.append("g").call(d3.axisLeft(y));
 
-    svg.append("text")
-        .attr("transform", `translate(${margin.left + width/2}, ${height + margin.top + 50})`)
-        .style("text-anchor", "middle")
+        svg
+          .append("text")
+          .attr(
+            "transform",
+            `translate(${margin.left + width / 2}, ${height + margin.top + 50})`
+          )
+          .style("text-anchor", "middle");
 
+        svg
+          .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", margin.left / 4)
+          .attr("x", 0 - (margin.top + height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle");
 
-    svg.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", margin.left/4)
-        .attr("x", 0 - (margin.top + height/2))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-   
+        const color = d3
+          .scaleOrdinal()
+          .domain(Object.keys(speedData))
+          .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
 
-    const color = d3.scaleOrdinal()
-        .domain(Object.keys(speedData))
-        .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
+        // Draw lines for each season
+        const line = d3
+          .line()
+          .x((d) => x(d.race))
+          .y((d) => y(d.average_speed_kph));
 
-    // Draw lines for each season
-    const line = d3.line()
-        .x(d => x(d.race))
-        .y(d => y(d.average_speed_kph));
-
-    Object.entries(speedData).forEach(([year, races]) => {
-        chart.append("path")
+        Object.entries(speedData).forEach(([year, races]) => {
+          chart
+            .append("path")
             .datum(races)
             .attr("fill", "none")
             .attr("stroke", color(year))
             .attr("stroke-width", 2.5)
             .attr("d", line)
-            .on("mouseover", function() {
-                d3.select(this).attr("stroke-width", 4);
+            .on("mouseover", function () {
+              d3.select(this).attr("stroke-width", 4);
             })
-            .on("mouseout", function() {
-                d3.select(this).attr("stroke-width", 2.5);
+            .on("mouseout", function () {
+              d3.select(this).attr("stroke-width", 2.5);
             });
-    });
+        });
 
-    const legend = d3.select("#legend");
-    const legendItems = legend.selectAll(".legend-item")
-    .data(Object.keys(speedData))  
-    .enter()
-    .append("div")
-    .attr("class", "legend-item")
-    .style("display", "flex")
-    .style("align-items", "center")
-    .style("margin-right", "20px"); 
+        const legend = d3.select("#legend");
+        const legendItems = legend
+          .selectAll(".legend-item")
+          .data(Object.keys(speedData))
+          .enter()
+          .append("div")
+          .attr("class", "legend-item")
+          .style("display", "flex")
+          .style("align-items", "center")
+          .style("margin-right", "20px");
 
-    legendItems.append("div")
-    .style("width", "20px")
-    .style("height", "20px")
-    .style("background-color", d => color(d))  
-    .style("margin-right", "8px");  
+        legendItems
+          .append("div")
+          .style("width", "20px")
+          .style("height", "20px")
+          .style("background-color", (d) => color(d))
+          .style("margin-right", "8px");
 
-    legendItems.append("span")
-    .text(d => d);
-
-
-});
-</script>
-
-</body>
+        legendItems.append("span").text((d) => d);
+      });
+    </script>
+  </body>
 </html>
