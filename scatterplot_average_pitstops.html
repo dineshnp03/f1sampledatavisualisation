@@ -22,8 +22,8 @@
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-      const x = d3.scaleLinear().domain([8, 15]).range([0, width]); // Adjust domain for pit stops
-      const y = d3.scaleLinear().domain([200, 230]).range([height, 0]); // Adjust domain for speed
+      const x = d3.scaleLinear().domain([8, 15]).range([0, width]);
+      const y = d3.scaleLinear().domain([200, 230]).range([height, 0]); 
 
       svg
         .append("g")
@@ -33,19 +33,15 @@
 
       svg.append("g").call(d3.axisLeft(y)).attr("class", "axis");
 
-      // Tooltip div
       const tooltip = d3
         .select("body")
         .append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-      // Fetching data from f1data.json
       d3.json("assets/f1data.json").then(data => {
-        // Extract driver performance data for the most recent season
         const driverPerformance = data.seasons[data.seasons.length - 1].driver_performance;
 
-        // Circles with color based on fetched data
         svg
           .selectAll(".dot")
           .data(driverPerformance)
@@ -78,11 +74,10 @@
           .attr("y", (d) => y(d.average_speed_kph) + 4)
           .text((d) => d.name);
 
-        // Mouseover interaction for tooltip
         svg
           .selectAll(".dot")
           .on("mouseover", function (event, d) {
-            d3.select(this).transition().duration(200).attr("r", 9); // Highlight
+            d3.select(this).transition().duration(200).attr("r", 9); 
 
             tooltip.transition().duration(200).style("opacity", 1);
 
@@ -94,15 +89,13 @@
               .style("top", event.pageY - 28 + "px");
           })
           .on("mouseout", function (event, d) {
-            d3.select(this).transition().duration(200).attr("r", 6); // Back to normal
+            d3.select(this).transition().duration(200).attr("r", 6); 
 
             tooltip.transition().duration(200).style("opacity", 0);
           });
 
-        // Track visibility
         const visibility = {};
 
-        // Filter function
         function updateVisibility() {
           svg
             .selectAll(".dot")
@@ -112,7 +105,6 @@
             .style("opacity", (d) => (visibility[d.name] ? 1 : 0));
         }
 
-        // Dynamically generate the legend based on data
         const legendContainer = d3.select("body").append("div").attr("class", "legend_sp");
         driverPerformance.forEach((driver) => {
           const legendItem = legendContainer.append("div");
@@ -141,7 +133,6 @@
             visibility[driver.name] = !visibility[driver.name];
             updateVisibility();
 
-            // Toggle class to style faded legend
             d3.select(this).classed("inactive", !visibility[driver.name]);
           });
         });

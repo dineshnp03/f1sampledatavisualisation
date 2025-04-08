@@ -19,7 +19,6 @@
 d3.json('assets/f1data.json').then(function(data) {
     const seasons = data.seasons;
 
-    // Prepare bar data: team points per year
     const teamPoints = [];
     seasons.forEach(season => {
         season.team_points.forEach(teamData => {
@@ -116,8 +115,6 @@ d3.json('assets/f1data.json').then(function(data) {
                 tooltip.style("opacity", 0);
             });
   
-            //legend
-     // ----- Draw Legend -----
   const legend = d3.select("#legend");
   const legendItems = legend.selectAll(".legend-item")
     .data(years)

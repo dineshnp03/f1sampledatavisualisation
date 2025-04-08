@@ -19,7 +19,6 @@
 d3.json('assets/f1data.json').then(function(data) {
     const seasons = data.seasons;
 
-    // Organize data by year
     const speedData = {};
     seasons.forEach(season => {
         speedData[season.year] = season.races.map(race => ({
@@ -34,7 +33,6 @@ d3.json('assets/f1data.json').then(function(data) {
           height = +svg.attr("height") - margin.top - margin.bottom,
           chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Set up x and y scales
     const allRaces = [...new Set(seasons.flatMap(season => season.races.map(r => r.race)))];
     const x = d3.scalePoint()
         .domain(allRaces)
@@ -49,7 +47,6 @@ d3.json('assets/f1data.json').then(function(data) {
         .nice()
         .range([height, 0]);
 
-    // X-axis
     chart.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x))
@@ -57,11 +54,9 @@ d3.json('assets/f1data.json').then(function(data) {
         .attr("transform", "rotate(-40)")
         .style("text-anchor", "end");
 
-    // Y-axis
     chart.append("g")
         .call(d3.axisLeft(y));
 
-    // Axis labels
     svg.append("text")
         .attr("transform", `translate(${margin.left + width/2}, ${height + margin.top + 50})`)
         .style("text-anchor", "middle")
@@ -75,12 +70,10 @@ d3.json('assets/f1data.json').then(function(data) {
         .style("text-anchor", "middle")
    
 
-    // Colors for years
     const color = d3.scaleOrdinal()
         .domain(Object.keys(speedData))
         .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
 
-    // Draw lines for each year
     const line = d3.line()
         .x(d => x(d.race))
         .y(d => y(d.average_speed_kph));
@@ -102,19 +95,19 @@ d3.json('assets/f1data.json').then(function(data) {
 
     const legend = d3.select("#legend");
     const legendItems = legend.selectAll(".legend-item")
-    .data(Object.keys(speedData))  // each year
+    .data(Object.keys(speedData))  
     .enter()
     .append("div")
     .attr("class", "legend-item")
     .style("display", "flex")
     .style("align-items", "center")
-    .style("margin-right", "20px"); // optional gap between items
+    .style("margin-right", "20px"); 
 
     legendItems.append("div")
     .style("width", "20px")
     .style("height", "20px")
-    .style("background-color", d => color(d))  // use the color scale for the year
-    .style("margin-right", "8px");  // gap between color box and text
+    .style("background-color", d => color(d)) 
+    .style("margin-right", "8px");  
 
     legendItems.append("span")
     .text(d => d);
