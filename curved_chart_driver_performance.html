@@ -1,114 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>F1 - Curved Line Chart - Driver Performance</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <link rel="stylesheet" href="assets/styles.css">
-</head>
-<body>
-  <h1 style="text-align: center">Formula 1 - Driver Performance Over Seasons</h1>
-  <div class="chart-container">
-    <svg id="curvedLineChart" width="700" height="400"></svg>
-  </div>
-  <div class="legend" id="legend"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>F1 - Curved Line Chart - Driver Performance</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <a href="index.html">
+      <button class="homeBtn">Go Back to Home</button>
+    </a>
+    <h1 style="text-align: center">
+      Formula 1 - Driver Performance Over Seasons (2022-2024)
+    </h1>
+    <div class="chart-container">
+      <svg id="curvedLineChart" width="700" height="400"></svg>
+    </div>
+    <div class="legend" id="legend"></div>
 
-  <script>
-    // Fetch the data from the external f1data.json file
-    d3.json('assets/f1data.json').then(function(data) {
+    <script>
+      // Fetching the data from the json file
+      d3.json("assets/f1data.json")
+        .then(function (data) {
+          
+          const driverData = data.seasons[0].driver_performance.map((d) => ({
+            name: d.name,
+            performance: [],
+          }));
 
-      // Prepare the data structure to hold driver performance over multiple seasons
-      const driverData = data.seasons[0].driver_performance.map(d => ({
-        name: d.name,
-        performance: []
-      }));
-
-      // Collect data for all years (2022, 2023, 2024)
-      data.seasons.forEach(season => {
-        season.driver_performance.forEach((driver, index) => {
-          driverData[index].performance.push({
-            year: season.year,
-            points: driver.points
+          // Collect data for all the seasons
+          data.seasons.forEach((season) => {
+            season.driver_performance.forEach((driver, index) => {
+              driverData[index].performance.push({
+                year: season.year,
+                points: driver.points,
+              });
+            });
           });
-        });
-      });
 
-      const svg = d3.select("#curvedLineChart");
-      const width = +svg.attr("width");
-      const height = +svg.attr("height");
+          const svg = d3.select("#curvedLineChart");
+          const width = +svg.attr("width");
+          const height = +svg.attr("height");
 
-      // Scales for x and y axes
-      const xScale = d3.scaleLinear()
-        .domain([2022, 2024])
-        .range([60, width - 60]);
+          // Scales for x and y axes
+          const xScale = d3
+            .scaleLinear()
+            .domain([2022, 2024])
+            .range([60, width - 60]);
 
-      const yScale = d3.scaleLinear()
-        .domain([0, d3.max(driverData.flatMap(d => d.performance.map(p => p.points)))])
-        .range([height - 40, 40]);
+          const yScale = d3
+            .scaleLinear()
+            .domain([
+              0,
+              d3.max(
+                driverData.flatMap((d) => d.performance.map((p) => p.points))
+              ),
+            ])
+            .range([height - 40, 40]);
 
-      // Line generator with curve
-      const lineGenerator = d3.line()
-        .x(d => xScale(d.year))
-        .y(d => yScale(d.points))
-        .curve(d3.curveMonotoneX);
+          // Line generator with curve
+          const lineGenerator = d3
+            .line()
+            .x((d) => xScale(d.year))
+            .y((d) => yScale(d.points))
+            .curve(d3.curveMonotoneX);
 
-      // Draw the axes
-      svg.append("g")
-        .attr("transform", `translate(0,${height - 40})`)
-        .call(d3.axisBottom(xScale).tickFormat(d3.format("d")));
+          // Drawing the axes
+          svg
+            .append("g")
+            .attr("transform", `translate(0,${height - 40})`)
+            .call(d3.axisBottom(xScale).tickFormat(d3.format("d")));
 
-      svg.append("g")
-        .attr("transform", "translate(60,0)")
-        .call(d3.axisLeft(yScale));
+          svg
+            .append("g")
+            .attr("transform", "translate(60,0)")
+            .call(d3.axisLeft(yScale));
 
-      // Color scale for each driver
-      const colorScale = d3.scaleOrdinal()
-        .domain(driverData.map(d => d.name))
-        .range(["#ff6347", "#4682b4", "#32cd32"]);
+          // adding color scale to each data
+          const colorScale = d3
+            .scaleOrdinal()
+            .domain(driverData.map((d) => d.name))
+            .range(["#ff6347", "#4682b4", "#32cd32"]);
 
-      // Draw the lines for each driver
-      driverData.forEach(driver => {
-        svg.append("path")
-          .data([driver.performance])
-          .attr("fill", "none")
-          .attr("stroke", colorScale(driver.name))
-          .attr("stroke-width", 3)
-          .attr("d", lineGenerator);
-      });
+         
+          driverData.forEach((driver) => {
+            svg
+              .append("path")
+              .data([driver.performance])
+              .attr("fill", "none")
+              .attr("stroke", colorScale(driver.name))
+              .attr("stroke-width", 3)
+              .attr("d", lineGenerator);
+          });
 
-      // Add the legend
-      const legend = d3.select("#legend");
-      const legendItems = legend.selectAll(".legend-item")
-        .data(driverData)
-        .enter()
-        .append("div")
-        .attr("class", "legend-item")
-        .style("display", "flex")
-        .style("align-items", "center");
+          // Adding the legend dynamically
+          const legend = d3.select("#legend");
+          const legendItems = legend
+            .selectAll(".legend-item")
+            .data(driverData)
+            .enter()
+            .append("div")
+            .attr("class", "legend-item")
+            .style("display", "flex")
+            .style("align-items", "center");
 
-      legendItems.append("div")
-        .style("width", "20px")
-        .style("height", "20px")
-        .style("background-color", d => colorScale(d.name));
+          legendItems
+            .append("div")
+            .style("width", "20px")
+            .style("height", "20px")
+            .style("background-color", (d) => colorScale(d.name));
 
-      legendItems.append("span")
-        .text(d => d.name);
+          legendItems.append("span").text((d) => d.name);
 
-      // Tooltip for displaying information on hover
-      const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+          // Tooltip data
+          const tooltip = d3
+            .select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
 
-      svg.selectAll("path")
-        .on("mouseover", function(event, driver) {
-          tooltip.transition().duration(200).style("opacity", 0.9);
-          tooltip.html(`<strong>${driver.name}</strong><br>Points: ${driver.performance[0].points}`)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 30) + "px");
+          svg
+            .selectAll("path")
+            .on("mouseover", function (event, driver) {
+              tooltip.transition().duration(200).style("opacity", 0.9);
+              tooltip
+                .html(
+                  `<strong>${driver.name}</strong><br>Points: ${driver.performance[0].points}`
+                )
+                .style("left", event.pageX + 10 + "px")
+                .style("top", event.pageY - 30 + "px");
+            })
+            .on("mouseout", () =>
+              tooltip.transition().duration(500).style("opacity", 0)
+            );
         })
-        .on("mouseout", () => tooltip.transition().duration(500).style("opacity", 0));
-
-    }).catch(function(error) {
-      console.log("Error loading the data: ", error);
-    });
-  </script>
-</body>
+        .catch(function (error) {
+          console.log("Error loading the data: ", error);
+        });
+    </script>
+  </body>
 </html>

@@ -5,8 +5,12 @@
     <title>Scatterplot - Speed vs Pit Stops</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
   </head>
   <body>
+    <a href="index.html">
+      <button class="homeBtn">Go Back to Home</button>
+    </a>
     <h1 style="text-align: center">Formula 1 - Speed Vs Pit stops</h1>
     <div class="chart-container">
       <svg id="scatterplot" width="600" height="400"></svg>
@@ -41,87 +45,24 @@
         .style("opacity", 0);
 
       // Fetching data from f1data.json
-      d3.json("assets/f1data.json").then(data => {
-        // Extract driver performance data for the most recent season
-        const driverPerformance = data.seasons[data.seasons.length - 1].driver_performance;
+      d3.json("assets/f1data.json")
+        .then((data) => {
+          // Extractig driver performance data for the most recent season
+          const driverPerformance =
+            data.seasons[data.seasons.length - 1].driver_performance;
 
-        // Circles with color based on fetched data
-        svg
-          .selectAll(".dot")
-          .data(driverPerformance)
-          .enter()
-          .append("circle")
-          .attr("class", "dot")
-          .attr("cx", (d) => x(d.pit_stops))
-          .attr("cy", (d) => y(d.average_speed_kph))
-          .attr("r", 6)
-          .attr("fill", (d) => {
-            switch (d.name) {
-              case "Max Verstappen":
-                return "#1f77b4";
-              case "Charles Leclerc":
-                return "#ff7f0e";
-              case "Lewis Hamilton":
-                return "#2ca02c";
-              default:
-                return "#000000";
-            }
-          });
-
-        svg
-          .selectAll(".label")
-          .data(driverPerformance)
-          .enter()
-          .append("text")
-          .attr("class", "label")
-          .attr("x", (d) => x(d.pit_stops) + 8)
-          .attr("y", (d) => y(d.average_speed_kph) + 4)
-          .text((d) => d.name);
-
-        // Mouseover interaction for tooltip
-        svg
-          .selectAll(".dot")
-          .on("mouseover", function (event, d) {
-            d3.select(this).transition().duration(200).attr("r", 9); // Highlight
-
-            tooltip.transition().duration(200).style("opacity", 1);
-
-            tooltip
-              .html(
-                `<strong>${d.name}</strong><br>Speed: ${d.average_speed_kph} km/h<br>Pit Stops: ${d.pit_stops}`
-              )
-              .style("left", event.pageX + 10 + "px")
-              .style("top", event.pageY - 28 + "px");
-          })
-          .on("mouseout", function (event, d) {
-            d3.select(this).transition().duration(200).attr("r", 6); // Back to normal
-
-            tooltip.transition().duration(200).style("opacity", 0);
-          });
-
-        // Track visibility
-        const visibility = {};
-
-        // Filter function
-        function updateVisibility() {
+          // Circles with color based on fetched data
           svg
             .selectAll(".dot")
-            .style("opacity", (d) => (visibility[d.name] ? 1 : 0));
-          svg
-            .selectAll(".label")
-            .style("opacity", (d) => (visibility[d.name] ? 1 : 0));
-        }
-
-        // Dynamically generate the legend based on data
-        const legendContainer = d3.select("body").append("div").attr("class", "legend_sp");
-        driverPerformance.forEach((driver) => {
-          const legendItem = legendContainer.append("div");
-
-          legendItem
-            .append("span")
-            .attr("class", "legend-color")
-            .style("background-color", function () {
-              switch (driver.name) {
+            .data(driverPerformance)
+            .enter()
+            .append("circle")
+            .attr("class", "dot")
+            .attr("cx", (d) => x(d.pit_stops))
+            .attr("cy", (d) => y(d.average_speed_kph))
+            .attr("r", 6)
+            .attr("fill", (d) => {
+              switch (d.name) {
                 case "Max Verstappen":
                   return "#1f77b4";
                 case "Charles Leclerc":
@@ -133,21 +74,89 @@
               }
             });
 
-          legendItem.append("span").text(driver.name);
+          svg
+            .selectAll(".label")
+            .data(driverPerformance)
+            .enter()
+            .append("text")
+            .attr("class", "label")
+            .attr("x", (d) => x(d.pit_stops) + 8)
+            .attr("y", (d) => y(d.average_speed_kph) + 4)
+            .text((d) => d.name);
 
-          visibility[driver.name] = true;
+          // Mouseover interaction for tooltip
+          svg
+            .selectAll(".dot")
+            .on("mouseover", function (event, d) {
+              d3.select(this).transition().duration(200).attr("r", 9); // Highlight
 
-          legendItem.on("click", function () {
-            visibility[driver.name] = !visibility[driver.name];
-            updateVisibility();
+              tooltip.transition().duration(200).style("opacity", 1);
 
-            // Toggle class to style faded legend
-            d3.select(this).classed("inactive", !visibility[driver.name]);
+              tooltip
+                .html(
+                  `<strong>${d.name}</strong><br>Speed: ${d.average_speed_kph} km/h<br>Pit Stops: ${d.pit_stops}`
+                )
+                .style("left", event.pageX + 10 + "px")
+                .style("top", event.pageY - 28 + "px");
+            })
+            .on("mouseout", function (event, d) {
+              d3.select(this).transition().duration(200).attr("r", 6); // Back to normal
+
+              tooltip.transition().duration(200).style("opacity", 0);
+            });
+
+          // Tracking visibility
+          const visibility = {};
+
+          function updateVisibility() {
+            svg
+              .selectAll(".dot")
+              .style("opacity", (d) => (visibility[d.name] ? 1 : 0));
+            svg
+              .selectAll(".label")
+              .style("opacity", (d) => (visibility[d.name] ? 1 : 0));
+          }
+
+          // Dynamically generating the legend based on data
+          const legendContainer = d3
+            .select("body")
+            .append("div")
+            .attr("class", "legend_sp");
+          driverPerformance.forEach((driver) => {
+            const legendItem = legendContainer.append("div");
+
+            legendItem
+              .append("span")
+              .attr("class", "legend-color")
+              .style("background-color", function () {
+                switch (driver.name) {
+                  case "Max Verstappen":
+                    return "#1f77b4";
+                  case "Charles Leclerc":
+                    return "#ff7f0e";
+                  case "Lewis Hamilton":
+                    return "#2ca02c";
+                  default:
+                    return "#000000";
+                }
+              });
+
+            legendItem.append("span").text(driver.name);
+
+            visibility[driver.name] = true;
+
+            legendItem.on("click", function () {
+              visibility[driver.name] = !visibility[driver.name];
+              updateVisibility();
+
+              // Toggle class to style faded legend
+              d3.select(this).classed("inactive", !visibility[driver.name]);
+            });
           });
+        })
+        .catch((error) => {
+          console.error("Error loading data:", error);
         });
-      }).catch(error => {
-        console.error("Error loading data:", error);
-      });
     </script>
   </body>
 </html>

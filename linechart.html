@@ -5,9 +5,12 @@
     <title>F1 Line Chart - Speed Trends</title>
     <link rel="stylesheet" href="assets/styles.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="formula1 car icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
-
+    <a href="index.html">
+        <button class="homeBtn">Go Back to Home</button>
+      </a>
 <h1 style="text-align: center">Formula 1 - Average Speed Trends (2022-2024)</h1>
 
 <div class="chart-container">
@@ -80,7 +83,7 @@ d3.json('assets/f1data.json').then(function(data) {
         .domain(Object.keys(speedData))
         .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
 
-    // Draw lines for each year
+    // Draw lines for each season
     const line = d3.line()
         .x(d => x(d.race))
         .y(d => y(d.average_speed_kph));
@@ -108,13 +111,13 @@ d3.json('assets/f1data.json').then(function(data) {
     .attr("class", "legend-item")
     .style("display", "flex")
     .style("align-items", "center")
-    .style("margin-right", "20px"); // optional gap between items
+    .style("margin-right", "20px"); 
 
     legendItems.append("div")
     .style("width", "20px")
     .style("height", "20px")
-    .style("background-color", d => color(d))  // use the color scale for the year
-    .style("margin-right", "8px");  // gap between color box and text
+    .style("background-color", d => color(d))  
+    .style("margin-right", "8px");  
 
     legendItems.append("span")
     .text(d => d);
