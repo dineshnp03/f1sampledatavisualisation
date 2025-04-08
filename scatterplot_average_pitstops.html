@@ -26,8 +26,8 @@
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-      const x = d3.scaleLinear().domain([8, 15]).range([0, width]); // Adjust domain for pit stops
-      const y = d3.scaleLinear().domain([200, 230]).range([height, 0]); // Adjust domain for speed
+      const x = d3.scaleLinear().domain([8, 15]).range([0, width]);
+      const y = d3.scaleLinear().domain([200, 230]).range([height, 0]); 
 
       svg
         .append("g")
@@ -37,7 +37,6 @@
 
       svg.append("g").call(d3.axisLeft(y)).attr("class", "axis");
 
-      // Tooltip div
       const tooltip = d3
         .select("body")
         .append("div")
